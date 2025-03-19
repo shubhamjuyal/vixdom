@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 export interface StateContextType {
   currentState: number;
   changeCurrentState: (state: number) => void;
-  file: any;
+  file: any; // eslint-disable-line
   setFile: (state: File | null) => void;
 }
 
@@ -22,12 +22,12 @@ export const StateProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const changeState = () => {
+export const useCurrentState = () => {
   const context = useContext(StateContext);
   return context;
 };
 
-export const getFileState = () => {
+export const useFileState = () => {
   const context = useContext(StateContext);
   return [context?.file, context?.setFile];
 };

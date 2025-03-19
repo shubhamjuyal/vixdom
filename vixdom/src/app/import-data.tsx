@@ -2,14 +2,18 @@
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/util/modal";
 import DragDrop from "@/components/util/file-uploader";
-import { useEffect, useRef, useState } from "react";
-import { changeState, getFileState, StateContextType } from "./StateContext";
+import { useRef, useState } from "react";
+import {
+  useCurrentState,
+  useFileState,
+  StateContextType,
+} from "./StateContext";
 import { fileTypes } from "./constants/file";
 
 const ImportData = () => {
   const [openBool, setOpenBool] = useState<boolean>(false);
-  const [file, setFile] = getFileState();
-  const currentState: StateContextType | undefined = changeState();
+  const [file, setFile] = useFileState();
+  const currentState: StateContextType | undefined = useCurrentState();
 
   const currentFile = useRef(file);
   console.log(file);

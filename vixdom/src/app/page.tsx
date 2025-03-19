@@ -1,10 +1,10 @@
 "use client";
 import Home from "./Home";
-import { changeState, StateContextType } from "./StateContext";
+import { useCurrentState, StateContextType } from "./StateContext";
 import { Icons } from "../components/icons/Icons";
 
 export default function Page() {
-  const currentState: StateContextType | undefined = changeState();
+  const currentState: StateContextType | undefined = useCurrentState();
   const showContent = () => {
     if (!currentState?.currentState) {
       return <Home />;

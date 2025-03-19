@@ -1,18 +1,10 @@
 "use client";
 import { fileTypes } from "@/app/constants/file";
-import { getFileState } from "@/app/StateContext";
+import { useFileState } from "@/app/StateContext";
 import React from "react";
 
 function DragDrop() {
-  const [file, setFile] = getFileState();
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    if (selectedFile && fileTypes.includes(selectedFile.type)) {
-      setFile(selectedFile);
-    } else {
-      alert("Invalid file type. Please upload a CSV or XLSX file.");
-    }
-  };
+  const [file, setFile] = useFileState();
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
