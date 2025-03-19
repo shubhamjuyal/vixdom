@@ -9,6 +9,7 @@ import {
   StateContextType,
 } from "./StateContext";
 import { fileTypes } from "./constants/file";
+import { toast } from "sonner";
 
 const ImportData = () => {
   const [openBool, setOpenBool] = useState<boolean>(false);
@@ -21,9 +22,10 @@ const ImportData = () => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile && fileTypes.includes(selectedFile.type)) {
+      toast("File uploaded successfully");
       setFile(selectedFile);
     } else {
-      alert("Invalid file type. Please upload a CSV or XLSX file.");
+      toast("Invalid file type. Please upload a CSV or XLSX file.");
     }
   };
 
