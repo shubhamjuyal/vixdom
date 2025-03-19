@@ -1,8 +1,10 @@
+"use client";
 import { Button } from "@/components/ui/button";
-import DragDrop from "@/components/util/file-uploader";
-import { Modal } from "@/components/util/modal";
+import ImportData from "./import-data";
+import { changeState, StateContextType } from "./StateContext";
 
 export default function Home() {
+  const currentState: StateContextType | undefined = changeState();
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
@@ -17,33 +19,12 @@ export default function Home() {
           </p>
 
           <div className="flex gap-4 items-center flex-col sm:flex-row ">
-            <Modal
-              trigger={
-                <Button
-                  size={"lg"}
-                  className="cursor-pointer"
-                  variant={"default"}
-                >
-                  Import Data
-                </Button>
-              }
-              styleClass={"!max-w-2xl"}
-              content={
-                <div className="">
-                  <div className="mt-[-20px]">
-                    <p className="text-2xl font-semibold">
-                      Select files to upload
-                    </p>
-                    <p className="text-gray-500">
-                      {"Drag a file to upload, or click on 'Browse Files'"}
-                    </p>
-                  </div>
-                  <DragDrop></DragDrop>
-                </div>
-              }
-            ></Modal>
-
-            <Button size={"lg"} className="cursor-pointer" variant={"outline"}>
+            <ImportData />
+            <Button
+              size={"lg"}
+              variant={"outline"}
+              className="cursor-pointer px-[40px]"
+            >
               About
             </Button>
           </div>
