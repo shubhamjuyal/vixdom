@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 
@@ -7,11 +6,40 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { X } from "lucide-react";
 
-function AlertDialog({
-  ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
-  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
+interface AlertDialogProps {
+  open?: boolean;
 }
+
+const AlertDialog: React.FC<React.PropsWithChildren<AlertDialogProps>> = ({
+  children,
+  open: openProp = false,
+  ...props
+}) => {
+  const [open, setOpen] = React.useState(openProp);
+
+  React.useEffect(() => {
+    if (!open) {
+      const elementsWithPointerEvents = document.querySelectorAll(
+        "[style*='pointer-events: none;']"
+      );
+      elementsWithPointerEvents.forEach((el) => {
+        if (el instanceof HTMLElement) {
+          el.style.pointerEvents = "";
+        }
+      });
+    }
+  }, [open]);
+
+  React.useEffect(() => {
+    setOpen(openProp);
+  }, [openProp]);
+
+  return (
+    <AlertDialogPrimitive.Root open={open} onOpenChange={setOpen} {...props}>
+      {children}
+    </AlertDialogPrimitive.Root>
+  );
+};
 
 function AlertDialogTrigger({
   ...props
@@ -143,8 +171,9 @@ function AlertDialogCancel({
   );
 }
 
+// Updated here: Using React.ComponentRef in forwardRef
 const AlertDialogClose = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
+  React.ComponentRef<typeof AlertDialogPrimitive.Cancel>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel

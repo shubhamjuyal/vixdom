@@ -1,18 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
-
-const fileTypes = [
-  "text/csv",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-];
+import { fileTypes } from "@/app/constants/file";
+import { getFileState } from "@/app/StateContext";
+import React from "react";
 
 function DragDrop() {
-  const [file, setFile] = useState<File | null>(null);
-
-  useEffect(() => {
-    console.log("file: ", file);
-  }, [file]);
-
+  const [file, setFile] = getFileState();
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile && fileTypes.includes(selectedFile.type)) {
@@ -49,15 +41,6 @@ function DragDrop() {
           <p className="text-gray-400">Drag & Drop a CSV or XLSX file here</p>
         )}
       </div>
-      <label className="cursor-pointer rounded-md border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]">
-        Browse Files
-        <input
-          type="file"
-          accept=".csv, .xlsx"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-      </label>
     </div>
   );
 }
