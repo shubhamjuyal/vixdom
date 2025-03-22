@@ -8,10 +8,13 @@ import { fileTypes } from "../constants/file";
 import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { SetDataTypes } from "./set-data-types";
+import { API } from "../services/client-api.service";
+import { IFileInfo } from "../interface";
 
 export const UploadFile = () => {
   const [openBool, setOpenBool] = useState<boolean>(false);
   const [currenStage, setCurrentStage] = useState(0);
+  const [fileInfo, setFileInfo] = useState<IFileInfo>();
   const [file, setFile] = useFileState();
   const currentFile = useRef(file);
 
@@ -26,10 +29,24 @@ export const UploadFile = () => {
   {
     const handleFileUpload = async () => {
       setCurrentStage(1);
-      setTimeout(() => {
-        toast("File uploaded successfully");
-        setCurrentStage(2);
-      }, 1000); // mimiks async await...
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const res = await API.post(
+          "http://localhost:8080/file-upload",
+          formData
+        );
+        console.log("res: ", res);
+        setFileInfo(res.data);
+        setTimeout(() => {
+          toast(res?.data?.message);
+          setCurrentStage(2);
+        }, 1000); // increase loading time
+      } catch (e: any) {
+        console.log("eee: ", e);
+        toast(e?.response?.data?.message || "Upload failed, please try again.");
+        setCurrentStage(0);
+      }
     };
 
     const getCurrentStage = () => {
@@ -37,7 +54,12 @@ export const UploadFile = () => {
         case 1:
           return <LoadingSpinner />;
         case 2:
-          return <SetDataTypes setCurrentStage={setCurrentStage} />;
+          return (
+            <SetDataTypes
+              fileInfo={fileInfo}
+              setCurrentStage={setCurrentStage}
+            />
+          );
       }
     };
 

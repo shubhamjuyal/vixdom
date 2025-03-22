@@ -25,22 +25,32 @@ import {
 } from "@/components/ui/select";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StateContextType, useCurrentState } from "../StateContext";
 import { Dispatch, SetStateAction } from "react";
+import { IFileInfo } from "../interface";
+import { dataTypeList } from "../constants/file";
 
 const fileInfoSchema = z.object({
   fileName: z.string().min(2, {
     message: "File name must be at least 2 characters.",
   }),
+  headers: z.array(
+    z.object({
+      name: z.string().min(1, { message: "Header name is required" }),
+      dataType: z.string().min(1, { message: "Data type is required" }),
+    })
+  ),
 });
 export type FileInfoFormValues = z.infer<typeof fileInfoSchema>;
 
 export const SetDataTypes = ({
+  fileInfo,
   setCurrentStage,
 }: {
+  fileInfo: IFileInfo | undefined;
   setCurrentStage: Dispatch<SetStateAction<number>>;
 }) => {
   const currentState: StateContextType | undefined = useCurrentState();
@@ -48,9 +58,17 @@ export const SetDataTypes = ({
   const form = useForm<z.infer<typeof fileInfoSchema>>({
     resolver: zodResolver(fileInfoSchema),
     defaultValues: {
-      fileName: "",
+      fileName: fileInfo?.fileName || "",
+      headers: fileInfo?.headers || [],
     },
   });
+
+  const { fields } = useFieldArray({
+    control: form.control,
+    name: "headers",
+  });
+
+  // on form submission
   const onSubmit = (data: FileInfoFormValues) => {
     // Handle form submission
     currentState?.changeCurrentState(1);
@@ -92,69 +110,55 @@ export const SetDataTypes = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow className="bg-white">
-                <TableCell className="font-semibold">Customer Name</TableCell>
-                <TableCell>
-                  <Input placeholder="Customer Name" />
-                </TableCell>
-                <TableCell>
-                  <Select>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Data Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="apple">Integer</SelectItem>
-                        <SelectItem value="banana">Decimal</SelectItem>
-                        <SelectItem value="blueberry">Date</SelectItem>
-                        <SelectItem value="grapes">Text</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-              </TableRow>
-              <TableRow className="bg-white">
-                <TableCell className="font-semibold">Age</TableCell>
-                <TableCell>
-                  <Input placeholder="Age" />
-                </TableCell>
-                <TableCell>
-                  <Select>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Data Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="apple">Integer</SelectItem>
-                        <SelectItem value="banana">Decimal</SelectItem>
-                        <SelectItem value="blueberry">Date</SelectItem>
-                        <SelectItem value="grapes">Text</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-              </TableRow>
-              <TableRow className="bg-white">
-                <TableCell className="font-semibold">Date of Birth</TableCell>
-                <TableCell>
-                  <Input placeholder="Date of Birth" />
-                </TableCell>
-                <TableCell>
-                  <Select>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Data Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="apple">Integer</SelectItem>
-                        <SelectItem value="banana">Decimal</SelectItem>
-                        <SelectItem value="blueberry">Date</SelectItem>
-                        <SelectItem value="grapes">Text</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-              </TableRow>
+              {fields.map((field, index) => (
+                <TableRow key={field.id} className="bg-white">
+                  <TableCell className="font-semibold">{field.name}</TableCell>
+                  <TableCell>
+                    <FormField
+                      control={form.control}
+                      name={`headers.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Column Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <FormField
+                      control={form.control}
+                      name={`headers.${index}.dataType`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <Select
+                            onValueChange={(val) => field.onChange(val)}
+                            value={field.value}
+                          >
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Data Type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                {dataTypeList.map(
+                                  (item: string, idx: number) => (
+                                    <SelectItem key={idx} value={item}>
+                                      {item}
+                                    </SelectItem>
+                                  )
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
 
