@@ -78,13 +78,14 @@ export const SetDataTypes = ({
     console.log("Submitting form:", data);
   };
   return (
-    <div className="space-y-4 h-full">
+    <div className="space-y-4  ">
       <div className="mt-[-15px]">
         <p className="text-2xl font-semibold">Preview file data</p>
         <p className="text-gray-500">
           {"Verify file name and additional information"}
         </p>
       </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -100,68 +101,70 @@ export const SetDataTypes = ({
               </FormItem>
             )}
           />
-
-          <Table className="text-left text-gray-500 dark:text-gray-400 rtl:text-right">
-            <TableHeader className="bg-gray-200 text-black dark:bg-gray-700  dark:text-gray-600">
-              <TableRow>
-                <TableHead>Column</TableHead>
-                <TableHead>Updated Column Name</TableHead>
-                <TableHead>Data Type</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {fields.map((field, index) => (
-                <TableRow key={field.id} className="bg-white">
-                  <TableCell className="font-semibold">{field.name}</TableCell>
-                  <TableCell>
-                    <FormField
-                      control={form.control}
-                      name={`headers.${index}.name`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input placeholder="Column Name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <FormField
-                      control={form.control}
-                      name={`headers.${index}.dataType`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <Select
-                            onValueChange={(val) => field.onChange(val)}
-                            value={field.value}
-                          >
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Data Type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {dataTypeList.map(
-                                  (item: string, idx: number) => (
-                                    <SelectItem key={idx} value={item}>
-                                      {item}
-                                    </SelectItem>
-                                  )
-                                )}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </TableCell>
+          <div className="scrollbar-thin max-h-[300px] overflow-y-auto">
+            <Table className="text-left text-gray-500 dark:text-gray-400 rtl:text-right">
+              <TableHeader className="bg-gray-200 text-black dark:bg-gray-700  dark:text-gray-600">
+                <TableRow>
+                  <TableHead>Column</TableHead>
+                  <TableHead>Updated Column Name</TableHead>
+                  <TableHead>Data Type</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-
+              </TableHeader>
+              <TableBody>
+                {fields.map((field, index) => (
+                  <TableRow key={field.id} className="bg-white">
+                    <TableCell className="font-semibold">
+                      {field.name}
+                    </TableCell>
+                    <TableCell>
+                      <FormField
+                        control={form.control}
+                        name={`headers.${index}.name`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input placeholder="Column Name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <FormField
+                        control={form.control}
+                        name={`headers.${index}.dataType`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <Select
+                              onValueChange={(val) => field.onChange(val)}
+                              value={field.value}
+                            >
+                              <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Data Type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  {dataTypeList.map(
+                                    (item: string, idx: number) => (
+                                      <SelectItem key={idx} value={item}>
+                                        {item}
+                                      </SelectItem>
+                                    )
+                                  )}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
           <div className="flex justify-between">
             <Button
               variant={"outline"}
