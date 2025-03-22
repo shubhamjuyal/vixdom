@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/util/modal";
 import DragDrop from "@/components/util/file-uploader";
-import { fileTypes } from "../constants/file";
+import { API_URL, fileTypes } from "../constants/file";
 import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { SetDataTypes } from "./set-data-types";
@@ -32,10 +32,7 @@ export const UploadFile = () => {
       const formData = new FormData();
       formData.append("file", file);
       try {
-        const res = await API.post(
-          "http://localhost:8080/file-upload",
-          formData
-        );
+        const res = await API.post(API_URL + "/file-upload", formData);
         console.log("res: ", res);
         setFileInfo(res.data);
         setTimeout(() => {
@@ -43,7 +40,6 @@ export const UploadFile = () => {
           setCurrentStage(2);
         }, 1000); // increase loading time
       } catch (e: any) {
-        console.log("eee: ", e);
         toast(e?.response?.data?.message || "Upload failed, please try again.");
         setCurrentStage(0);
       }
