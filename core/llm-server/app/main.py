@@ -8,3 +8,8 @@ app.include_router(file_info_routes.router)
 @app.get("/")
 def root():
     return {"message": "Welcome to the FastAPI CRUD Server!"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=9000)
