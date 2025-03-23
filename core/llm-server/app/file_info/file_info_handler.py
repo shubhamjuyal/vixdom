@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, UploadFile, File
 import csv
 from io import StringIO
 from app.file_info.file_info_model import FileInfo, HeaderObject
-from app.services.llm_service import LLMService
+from app.file_info.file_info_llm_service import LLMService
 
 
 def infer_data_type(values):
@@ -44,10 +44,25 @@ async def extractDataTypes(file: UploadFile = File(...)):
             data_type = infer_data_type(column_data)
             header_objects.append(HeaderObject(
                 name=header, dataType=data_type))
-        res = await LLMService()
-        print(f"LLM response: {res}")
+
         return FileInfo(headers=header_objects)
 
+    except Exception as e:
+        raise HTTPException(
+            status_code=400, detail=f"Failed to parse CSV: {str(e)}")
+
+
+async def inspectCsv(file: UploadFile = File(...)):
+    if not file.filename.endswith(".csv"):
+        raise HTTPException(
+            status_code=400, detail="Only CSV files are supported.")
+    try:
+        content = await file.read()
+        decoded = content.decode("utf-8")
+        csv_reader = csv.reader(StringIO(decoded))
+
+        res = await LLMService().inspect_csv(list(csv_reader), "1768412")
+        return res
     except Exception as e:
         raise HTTPException(
             status_code=400, detail=f"Failed to parse CSV: {str(e)}")

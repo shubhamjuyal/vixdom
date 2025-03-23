@@ -6,3 +6,5 @@ langchain
 langchain_community
 langchain_google_genai
 langchain_openai
+pandas
+sentence-transformers
