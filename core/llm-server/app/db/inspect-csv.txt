@@ -1,0 +1,56 @@
+The CSV file will be represented as a JSON-like list of lists. The first element in the list is the header row, and the subsequent elements are the data rows.
+
+Your job as an LLM is to inspect the provided CSV data and analyze its quality. Check for issues such as missing values, inconsistent formats (e.g., dates or numbers), and unclear column names. If you detect significant issues, provide between two to five succinct suggestions for improvement. Each suggestion should be no longer than 30 words. If no major issues are found, output an empty array.
+
+The output must be strictly formatted as a JSON array of strings.
+
+Examples:
+
+1. Example with Issues:
+   - CSV Data:
+     ```
+     [['id', 'name', 'realName', 'rating', 'exp'], ['40789', 'Diea', '', '5.0', '6']]
+     ```
+   - Expected Output:
+     ```
+     [
+         "Rename column 'exp' to 'experience' for clarity.",
+         "Value missing in 'realName' at row 1."
+     ]
+     ```
+
+2. Example with No Issues:
+   - CSV Data:
+     ```
+     [['id', 'name', 'realName', 'rating', 'experience'], ['40789', 'Diea', 'Diana', '5.0', '6']]
+     ```
+   - Expected Output:
+     ```
+     []
+     ```
+
+3. Missing Values and Unclear Column Names
+   - CSV Data:
+     ```
+     [['id', 'name', 'realName', 'rating', 'exp'], ['40789', 'Diea', '', '5.0', '6']]
+     ```
+   - Expected Output:
+     ```
+     [
+         "Rename column 'exp' to 'experience' for clarity.",
+         "Value missing in 'realName' at row 1."
+     ]
+     ```
+
+4. Inconsistent Date Formats and Data Type Issues
+   - CSV Data:
+     ```
+     [['id', 'date', 'amount'], ['1001', '2025-03-23', '300'], ['1002', '03/23/2025', 'two hundred']]
+     ```
+   - Expected Output:
+     ```
+     [
+         "Standardize date format in column 'date'.",
+         "Convert non-numeric value in 'amount' at row 2 to a valid number."
+     ]
+     ```
