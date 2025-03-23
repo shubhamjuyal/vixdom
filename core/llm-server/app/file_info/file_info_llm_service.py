@@ -73,17 +73,33 @@ class LLMService:
 
 class ListOfStringsOutputParser(BaseOutputParser):
     def parse(self, text: str) -> list:
+        import re
+        # Remove code block markers (e.g., ```json or ```)
+        cleaned = re.sub(r"```[\w]*", "", text)
+        cleaned = cleaned.replace("```", "").strip()
         try:
-            parsed = json.loads(text)
+            # Try to parse the cleaned text as JSON
+            parsed = json.loads(cleaned)
             if isinstance(parsed, list) and all(isinstance(item, str) for item in parsed):
                 return parsed
             else:
                 raise ValueError("Output is not a list of strings.")
         except Exception:
-            # Fallback: split by newlines and remove empty lines
+            # Fallback: process line by line if JSON parsing fails
             lines = [line.strip()
-                     for line in text.splitlines() if line.strip()]
-            return lines
+                     for line in cleaned.splitlines() if line.strip()]
+            suggestions = []
+            for line in lines:
+                # Skip lines that are only structural markers
+                if line in ["[", "]"]:
+                    continue
+                # Remove any trailing commas
+                line = line.rstrip(",")
+                # Remove surrounding quotes if present
+                if (line.startswith('"') and line.endswith('"')) or (line.startswith("'") and line.endswith("'")):
+                    line = line[1:-1]
+                suggestions.append(line)
+            return suggestions
 
     @property
     def _type(self) -> str:
