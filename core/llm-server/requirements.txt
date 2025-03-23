@@ -1,2 +1,8 @@
 fastapi
 uvicorn
+python-multipart
+pydantic
+langchain
+langchain_community
+langchain_google_genai
+langchain_openai
