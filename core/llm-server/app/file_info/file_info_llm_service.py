@@ -39,7 +39,7 @@ class LLMService:
     async def inspect_csv(self, csv_sample, session_id: str):
         print("\n\n\ncsv_sample: ", csv_sample)
         file1 = open(
-            "C:/Users/shubham/Documents/GitHub/vixdom/core/llm-server/app/db/inspect-csv.txt", "r+")
+            "app/db/inspect-csv.txt", "r+")
         res = file1.read()
         # prepare vector store
         self._prepare_vectorstore(csv_sample=res,
