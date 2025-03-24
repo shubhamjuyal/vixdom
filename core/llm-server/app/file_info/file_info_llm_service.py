@@ -9,6 +9,8 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.docstore.document import Document
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.schema.output_parser import StrOutputParser
+from google.cloud import firestore
+from langchain_google_firestore import FirestoreChatMessageHistory
 
 load_dotenv()
 
@@ -69,6 +71,29 @@ class LLMService:
         result = qa_chain.run(json.dumps(messages))
         print("\n\n\nFinal result:", ListOfStringsOutputParser().parse(result))
         return ListOfStringsOutputParser().parse(result)
+
+    async def chat_with_history(self, sessionId: str):
+        PROJECT_ID = "langchain-fr"
+        SESSION_ID = sessionId
+        COLLECTION_NAME = "chat_history"
+
+        client = firestore.Client(project=PROJECT_ID)
+
+        chat_history = FirestoreChatMessageHistory(
+            session_id=SESSION_ID,
+            collection=COLLECTION_NAME,
+            client=client,
+        )
+
+        while True:
+            human_input = input("User: ")
+            if human_input.lower() == "exit":
+                break
+
+            chat_history.add_user_message(human_input)
+
+            ai_response = self.llm.invoke(chat_history.messages)
+            chat_history.add_ai_message(ai_response.content)
 
 
 class ListOfStringsOutputParser(BaseOutputParser):

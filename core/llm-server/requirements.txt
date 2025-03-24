@@ -9,3 +9,4 @@ langchain_openai
 pandas
 sentence-transformers
 chromadb
+langchain_google_firestore
