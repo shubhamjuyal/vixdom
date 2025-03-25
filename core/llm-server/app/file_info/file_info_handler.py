@@ -3,13 +3,34 @@ import csv
 from io import StringIO
 from app.file_info.file_info_model import FileInfo, HeaderObject
 from app.file_info.file_info_llm_service import LLMService
+from datetime import datetime
+
+
+def is_date(val):
+    date_formats = [
+        "%d-%m-%Y",
+        "%Y/%m/%d",
+        "%Y-%m-%d",
+        "%m/%d/%Y",
+        "%d/%m/%Y"
+    ]
+    for fmt in date_formats:
+        try:
+            datetime.strptime(val, fmt)
+            return True
+        except ValueError:
+            continue
+    return False
 
 
 def infer_data_type(values):
-    # Very basic type inference
     for val in values:
         if val == "":
             continue
+
+        if is_date(val):
+            return "Date"
+
         try:
             int(val)
         except ValueError:
@@ -52,7 +73,12 @@ async def extractDataTypes(file: UploadFile = File(...)):
             status_code=400, detail=f"Failed to parse CSV: {str(e)}")
 
 
-async def inspectCsv(file: UploadFile = File(...)):
+async def inspectCsv(sessionId: str, file: UploadFile = File(...)):
+
+    if not sessionId:
+        raise HTTPException(
+            status_code=400, detail="No sessionId found")
+
     if not file.filename.endswith(".csv"):
         raise HTTPException(
             status_code=400, detail="Only CSV files are supported.")
@@ -61,7 +87,7 @@ async def inspectCsv(file: UploadFile = File(...)):
         decoded = content.decode("utf-8")
         csv_reader = csv.reader(StringIO(decoded))
 
-        res = await LLMService().inspect_csv(list(csv_reader), "21242212")
+        res = await LLMService().inspect_csv(list(csv_reader), sessionId)
         return res
     except Exception as e:
         raise HTTPException(
