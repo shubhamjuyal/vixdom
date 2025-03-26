@@ -32,7 +32,10 @@ export const UploadFile = () => {
       const formData = new FormData();
       formData.append("file", file);
       try {
-        const res = await API.post(API_URL + "/file-upload", formData);
+        const res = await API.post(
+          API_URL + "/file-upload/extract-data-types",
+          formData
+        );
         console.log("res: ", res);
         setFileInfo(res.data);
         setTimeout(() => {

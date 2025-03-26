@@ -4,10 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useChat } from "ai/react";
 import { useRef, useEffect } from "react";
+import { API_URL } from "./constants/file";
 
 export function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: "api/ex4",
+    api: API_URL + "/chat",
     onError: (e) => {
       console.log(e);
     },
